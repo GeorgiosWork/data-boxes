@@ -13,7 +13,7 @@ export async function onRequestPost({ request, env }) {
   }
 
   const indexKey = `index:${clientId}`;
-  const raw = await env.USER_ARIES_CES_SID.get(indexKey);
+  const raw = await env.USER_DATA_BOXES_SID.get(indexKey);
   const items = raw ? JSON.parse(raw) : [];
 
   const idx = items.findIndex(x => x.id === id);
@@ -23,7 +23,7 @@ export async function onRequestPost({ request, env }) {
 
   try {
     await env.R2.delete(entry.key);
-    await env.USER_ARIES_CES_SID.put(indexKey, JSON.stringify(items));
+    await env.USER_DATA_BOXES_SID.put(indexKey, JSON.stringify(items));
   } catch (err) {
     return new Response("Storage error: " + err.message, { status: 500 });
   }

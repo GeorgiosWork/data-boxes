@@ -22,7 +22,7 @@ export async function requireAdminSession(request, env) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    const session = await env.ADMIN_ARIES_CES_SID.get(`admin_session:${token}`);
+    const session = await env.ADMIN_DATA_BOXES_SID.get(`admin_session:${token}`);
     if (!session) {
       return new Response("Unauthorized", { status: 401 });
     }

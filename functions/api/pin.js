@@ -36,7 +36,7 @@ export async function onRequestGet({ request, env }) {
   const result = {};
   await Promise.all(
     [...KNOWN_CLIENTS].map(async id => {
-      const val = await env.USER_ARIES_CES_SID.get(`pin:${id}`);
+      const val = await env.USER_DATA_BOXES_SID.get(`pin:${id}`);
       result[id] = val !== null;
     })
   );
@@ -64,7 +64,7 @@ export async function onRequestPost({ request, env }) {
   }
 
   const { salt, hash } = await hashPin(pin);
-  await env.USER_ARIES_CES_SID.put(`pin:${employeeId}`, JSON.stringify({ salt, hash }));
+  await env.USER_DATA_BOXES_SID.put(`pin:${employeeId}`, JSON.stringify({ salt, hash }));
 
   return new Response(JSON.stringify({ ok: true }), {
     headers: { "content-type": "application/json" },

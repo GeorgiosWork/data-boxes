@@ -60,7 +60,7 @@ export async function onRequestPost({ request, env }) {
 
   // Aktualizace KV indexu
   const indexKey = `index:${clientId}`;
-  const raw = await env.USER_ARIES_CES_SID.get(indexKey);
+  const raw = await env.USER_DATA_BOXES_SID.get(indexKey);
   const items = raw ? JSON.parse(raw) : [];
 
   const entry = {
@@ -75,7 +75,7 @@ export async function onRequestPost({ request, env }) {
   };
 
   items.unshift(entry);
-  await env.USER_ARIES_CES_SID.put(indexKey, JSON.stringify(items));
+  await env.USER_DATA_BOXES_SID.put(indexKey, JSON.stringify(items));
 
   return new Response(JSON.stringify({ ok: true, entry }), {
     headers: { "content-type": "application/json; charset=utf-8" },

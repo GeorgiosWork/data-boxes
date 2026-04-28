@@ -1,17 +1,17 @@
-name = "aries-ces-app"
+name = "data-boxes-app"
 compatibility_date = "2026-04-05"
 pages_build_output_dir = "public"
 
 [[r2_buckets]]
 binding = "R2"
-bucket_name = "aries-ces-bucket"
+bucket_name = "data-boxes-bucket"
 
 [[kv_namespaces]]
-binding = "USER_ARIES_CES_SID"
+binding = "USER_DATA_BOXES_SID"
 id = "c498c80b8f154ec583ca902139e34733"
 
 [[kv_namespaces]]
-binding = "ADMIN_ARIES_CES_SID"
+binding = "ADMIN_DATA_BOXES_SID"
 id = "6ee872da307a487ca87132f9403d911d"
 
 # Environment variables — nastavit v Cloudflare dashboard:

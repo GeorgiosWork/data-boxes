@@ -28,16 +28,16 @@ function getClientIp(request) {
 }
 
 async function checkRateLimit(env, ip) {
-  const raw = await env.USER_ARIES_CES_SID.get(`ratelimit:${ip}`);
+  const raw = await env.USER_DATA_BOXES_SID.get(`ratelimit:${ip}`);
   const data = raw ? JSON.parse(raw) : { attempts: 0 };
   return data.attempts >= RL_MAX_ATTEMPTS;
 }
 
 async function incrementRateLimit(env, ip) {
-  const raw = await env.USER_ARIES_CES_SID.get(`ratelimit:${ip}`);
+  const raw = await env.USER_DATA_BOXES_SID.get(`ratelimit:${ip}`);
   const data = raw ? JSON.parse(raw) : { attempts: 0 };
   data.attempts += 1;
-  await env.USER_ARIES_CES_SID.put(
+  await env.USER_DATA_BOXES_SID.put(
     `ratelimit:${ip}`,
     JSON.stringify(data),
     { expirationTtl: RL_WINDOW_SECONDS }
@@ -45,7 +45,7 @@ async function incrementRateLimit(env, ip) {
 }
 
 async function resetRateLimit(env, ip) {
-  await env.USER_ARIES_CES_SID.delete(`ratelimit:${ip}`);
+  await env.USER_DATA_BOXES_SID.delete(`ratelimit:${ip}`);
 }
 
 // ── Crypto helpers ──
@@ -104,7 +104,7 @@ export async function onRequestPost({ request, env }) {
   }
 
   // 3. Načti hash PINu z KV
-  const raw = await env.USER_ARIES_CES_SID.get(`pin:${employeeId}`);
+  const raw = await env.USER_DATA_BOXES_SID.get(`pin:${employeeId}`);
   if (!raw) {
     // Žádný PIN nastaven — neinkrementuj (není to útok, ale chyba konfigurace)
     return new Response(JSON.stringify({ ok: false, reason: "no_pin" }), {
@@ -130,7 +130,7 @@ export async function onRequestPost({ request, env }) {
   const sessionToken = bytesToHex(tokenBytes);
   const expiresAt    = Date.now() + SESSION_TTL_SECONDS * 1000;
 
-  await env.USER_ARIES_CES_SID.put(
+  await env.USER_DATA_BOXES_SID.put(
     `session:${sessionToken}`,
     JSON.stringify({ employeeId, expiresAt }),
     { expirationTtl: SESSION_TTL_SECONDS }

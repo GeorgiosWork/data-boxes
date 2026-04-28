@@ -30,7 +30,7 @@ export async function onRequestGet({ request, env }) {
   const limit  = Math.min(parseInt(url.searchParams.get("limit") || "20", 10), 100);
   const cursor = url.searchParams.get("cursor") || null;
 
-  const raw      = await env.USER_ARIES_CES_SID.get(`index:${employeeId}`);
+  const raw      = await env.USER_DATA_BOXES_SID.get(`index:${employeeId}`);
   const allItems = raw ? JSON.parse(raw) : [];
 
   // Stránkování pomocí cursor (= id posledního zobrazeného záznamu)

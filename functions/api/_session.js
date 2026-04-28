@@ -16,7 +16,7 @@ export async function requireSession(request, env) {
     return new Response("Missing session token", { status: 401 });
   }
 
-  const raw = await env.USER_ARIES_CES_SID.get(`session:${token}`);
+  const raw = await env.USER_DATA_BOXES_SID.get(`session:${token}`);
   if (!raw) {
     return new Response("Session expired or invalid", { status: 401 });
   }
@@ -25,7 +25,7 @@ export async function requireSession(request, env) {
 
   if (Date.now() > session.expiresAt) {
     // Explicitně smazat prošlou session (KV TTL to udělá samo, ale pro jistotu)
-    await env.USER_ARIES_CES_SID.delete(`session:${token}`);
+    await env.USER_DATA_BOXES_SID.delete(`session:${token}`);
     return new Response("Session expired", { status: 401 });
   }
 

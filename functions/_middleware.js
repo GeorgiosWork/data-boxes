@@ -4,7 +4,7 @@
  * Chráněno: /admin.html (a /admin)
  * Veřejné:  vše ostatní — index.html, login.html, /api/*
  *
- * Admin session je uložena v ADMIN_ARIES_CES_SID pod klíčem admin_session:<token>
+ * Admin session je uložena v ADMIN_DATA_BOXES_SID pod klíčem admin_session:<token>
  */
 
 const ADMIN_PATHS = ["/admin", "/admin.html"];
@@ -31,7 +31,7 @@ export async function onRequest(context) {
 
   const token   = cookies["CF_SESSION"];
   const session = token
-    ? await env.ADMIN_ARIES_CES_SID.get(`admin_session:${token}`)
+    ? await env.ADMIN_DATA_BOXES_SID.get(`admin_session:${token}`)
     : null;
 
   if (!session) {

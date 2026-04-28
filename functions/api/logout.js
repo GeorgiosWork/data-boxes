@@ -15,7 +15,7 @@ export async function onRequest({ request, env }) {
 
   const token = cookies["CF_SESSION"];
   if (token) {
-    await env.ADMIN_ARIES_CES_SID.delete(`admin_session:${token}`);
+    await env.ADMIN_DATA_BOXES_SID.delete(`admin_session:${token}`);
   }
 
   return new Response(null, {
