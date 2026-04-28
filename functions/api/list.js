@@ -4,7 +4,7 @@ import { requireAdminSession } from "./_admin_session.js";
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
 
-  // Pokud je přítomen Bearer token → zaměstnanec (ignoruj cookie)
+  // Pokud je přítomen Bearer token → klient (ignoruj cookie)
   const auth = request.headers.get("authorization") || "";
   const hasBearer = auth.startsWith("Bearer ");
 
@@ -21,7 +21,7 @@ export async function onRequestGet({ request, env }) {
     if (!clientId) return new Response("Missing clientId", { status: 400 });
     employeeId = clientId;
   } else {
-    // Zaměstnanec — ověř Bearer session token
+    // Klient — ověř Bearer session token
     const session = await requireSession(request, env);
     if (session instanceof Response) return session;
     employeeId = session.employeeId;

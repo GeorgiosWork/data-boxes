@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin | Mzdový portál</title>
+  <title>Admin | Datové schránky</title>
   <style>
     :root {
       --blue: #1a56db;
@@ -162,7 +162,7 @@
     <span class="dot">
       <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/></svg>
     </span>
-    Mzdový portál — Administrace
+    Datové schránky — Administrace
   </div>
   <div class="topbar-right">
     Náhled:
@@ -174,7 +174,7 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active" data-tab="upload">Nahrávání dokumentů</button>
+    <button class="tab active" data-tab="upload">Nahrávání souborů</button>
     <button class="tab" data-tab="pins">Správa PINů</button>
   </div>
 
@@ -183,37 +183,26 @@
     <div class="grid2">
 
       <div class="card">
-        <h2>Nahrát dokument</h2>
+        <h2>Nahrát soubor datové schránky</h2>
 
         <div class="field">
-          <label for="selEmployee">Zaměstnanec</label>
-          <select id="selEmployee">
-            <option value="Z0039">Z0039 – Filipová Petra</option>
-            <option value="Z0037">Z0037 – Lukavská Adéla</option>
-            <option value="Z0050">Z0050 – Prouzová Lenka</option>
-            <option value="Z0068">Z0068 – Čapková Kateřina</option>
-            <option value="Z0052">Z0052 – Nezvalová Jolana</option>
-            <option value="Z0067">Z0067 – Koval Olena</option>
-            <option value="Z0066">Z0066 – Krayczy Erik</option>
-            <option value="Z0069">Z0069 – Lenher Daryna</option>
-            <option value="Z0043">Z0043 – Izáková Květa</option>
-            <option value="Z0070">Z0070 – Izáková Adéla</option>
-          </select>
+          <label for="selEmployee">Klient</label>
+          <select id="selEmployee"></select>
         </div>
 
         <div class="field">
           <label for="selCategory">Kategorie</label>
           <select id="selCategory">
-            <option value="Výplatní páska">Výplatní páska</option>
-            <option value="Mzdový list">Mzdový list</option>
-            <option value="Potvrzení o příjmu">Potvrzení o příjmu</option>
+            <option value="Datová zpráva">Datová zpráva</option>
+            <option value="Doručenka">Doručenka</option>
+            <option value="Příloha">Příloha</option>
             <option value="Ostatní">Ostatní</option>
           </select>
         </div>
 
         <div class="field">
-          <label for="selFile">Soubor (.pdf, .docx, .csv, .md, .xml, .ts)</label>
-          <input id="selFile" type="file" accept=".pdf,.docx,.csv,.md,.xml,.ts" multiple />
+          <label for="selFile">Soubor (.zip, .pdf, .zfo)</label>
+          <input id="selFile" type="file" accept=".zip,.pdf,.zfo" multiple />
         </div>
 
         <button class="btn btn-primary" id="uploadBtn">Nahrát</button>
@@ -221,20 +210,9 @@
       </div>
 
       <div class="card">
-        <h2>Soubory zaměstnance</h2>
+        <h2>Soubory klienta</h2>
         <div class="list-toolbar">
-          <select id="filterEmployee" style="padding:7px 10px; font-size:13px; border:1.5px solid var(--border); border-radius:9px; background:#fafbfc;">
-            <option value="Z0039">Z0039 – Filipová Petra</option>
-            <option value="Z0037">Z0037 – Lukavská Adéla</option>
-            <option value="Z0050">Z0050 – Prouzová Lenka</option>
-            <option value="Z0068">Z0068 – Čapková Kateřina</option>
-            <option value="Z0052">Z0052 – Nezvalová Jolana</option>
-            <option value="Z0067">Z0067 – Koval Olena</option>
-            <option value="Z0066">Z0066 – Krayczy Erik</option>
-            <option value="Z0069">Z0069 – Lenher Daryna</option>
-            <option value="Z0043">Z0043 – Izáková Květa</option>
-            <option value="Z0070">Z0070 – Izáková Adéla</option>
-          </select>
+          <select id="filterEmployee" style="padding:7px 10px; font-size:13px; border:1.5px solid var(--border); border-radius:9px; background:#fafbfc;"></select>
           <button class="btn" id="refreshBtn" style="font-size:12px; padding:7px 14px;">↺ Obnovit</button>
         </div>
         <div id="fileList"><p class="empty-note">Načítám…</p></div>
@@ -251,19 +229,8 @@
         <h2>Nastavit / změnit heslo</h2>
 
         <div class="field">
-          <label for="pinEmployee">Zaměstnanec</label>
-          <select id="pinEmployee">
-            <option value="Z0039">Z0039 – Filipová Petra</option>
-            <option value="Z0037">Z0037 – Lukavská Adéla</option>
-            <option value="Z0050">Z0050 – Prouzová Lenka</option>
-            <option value="Z0068">Z0068 – Čapková Kateřina</option>
-            <option value="Z0052">Z0052 – Nezvalová Jolana</option>
-            <option value="Z0067">Z0067 – Koval Olena</option>
-            <option value="Z0066">Z0066 – Krayczy Erik</option>
-            <option value="Z0069">Z0069 – Lenher Daryna</option>
-            <option value="Z0043">Z0043 – Izáková Květa</option>
-            <option value="Z0070">Z0070 – Izáková Adéla</option>
-          </select>
+          <label for="pinEmployee">Klient</label>
+          <select id="pinEmployee"></select>
         </div>
 
         <div class="field">
@@ -282,13 +249,13 @@
       <div class="card">
         <h2>Přehled hesel</h2>
         <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">
-          Zobrazuje, zda má zaměstnanec nastavené heslo. Hodnoty hesel nejsou zobrazeny.
+          Zobrazuje, zda má klient nastavené heslo. Hodnoty hesel nejsou zobrazeny.
         </p>
         <table class="pin-table">
           <thead>
             <tr>
-              <th>Zaměstnanec</th>
-              <th>Os. číslo</th>
+              <th>Klient</th>
+              <th>Číslo</th>
               <th>Heslo</th>
               <th></th>
             </tr>
@@ -312,18 +279,18 @@
   const esc = s => String(s).replace(/[&<>"']/g, c =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  const EMPLOYEES = [
-    { id: "Z0039", name: "Filipová Petra" },
-    { id: "Z0037", name: "Lukavská Adéla" },
-    { id: "Z0050", name: "Prouzová Lenka" },
-    { id: "Z0068", name: "Čapková Kateřina" },
-    { id: "Z0052", name: "Nezvalová Jolana" },
-    { id: "Z0067", name: "Koval Olena" },
-    { id: "Z0066", name: "Krayczy Erik" },
-    { id: "Z0069", name: "Lenher Daryna" },
-    { id: "Z0043", name: "Izáková Květa" },
-    { id: "Z0070", name: "Izáková Adéla" },
-  ];
+  const CLIENTS = Array.from({ length: 50 }, (_, i) => {
+    const id = `C${String(i + 1).padStart(3, "0")}`;
+    return { id, name: `Klient ${id}` };
+  });
+
+  function fillClientSelect(id) {
+    $(id).innerHTML = CLIENTS
+      .map(client => `<option value="${client.id}">${client.id} – ${client.name}</option>`)
+      .join("");
+  }
+
+  ["selEmployee", "filterEmployee", "pinEmployee"].forEach(fillClientSelect);
 
   /* ── Tabs ── */
   document.querySelectorAll(".tab").forEach(btn => {
@@ -476,13 +443,13 @@
     const tbody = $("pinTableBody");
     tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px;">Načítám…</td></tr>`;
 
-    // Pro každého zaměstnance zkusíme přečíst existenci záznamu přes /api/pin-status
+    // Pro každého klienta zkusíme přečíst existenci záznamu přes /api/pin-status
     // Nemáme speciální endpoint — použijeme /api/list jako proxy (jen kontrolujeme existenci)
     // Správné řešení: dedikovaný GET /api/pin endpoint chráněný admin tokenem
     // Pro nyní zobrazíme tabulku s tlačítkem "Nastavit" → přepne výběr vlevo
 
     tbody.innerHTML = "";
-    EMPLOYEES.forEach(emp => {
+    CLIENTS.forEach(emp => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${esc(emp.name)}</td>
@@ -500,8 +467,8 @@
       const res = await fetch("/api/pin");
       if (res.ok) {
         const data = await res.json();
-        // data.pins = { "Z0039": true, "Z0037": false, ... }
-        EMPLOYEES.forEach(emp => {
+        // data.pins = { "C001": true, "C002": false, ... }
+        CLIENTS.forEach(emp => {
           const cell = $(`pin-status-${emp.id}`);
           if (!cell) return;
           if (data.pins?.[emp.id]) {

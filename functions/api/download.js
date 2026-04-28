@@ -14,7 +14,7 @@ export async function onRequestGet({ request, env }) {
   if (!key) return new Response("Missing ?key", { status: 400 });
   if (key.includes("..")) return new Response("Invalid key", { status: 400 });
 
-  // Klíč musí začínat prefixem zaměstnance — zabrání přístupu k cizím souborům
+  // Klíč musí začínat prefixem klienta — zabrání přístupu k cizím souborům
   // Formát klíče: {employeeId}/{timestamp}_{filename}
   if (!key.startsWith(`${employeeId}/`)) {
     return new Response("Forbidden", { status: 403 });

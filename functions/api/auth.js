@@ -1,6 +1,6 @@
 /**
  * POST /api/auth
- * Tělo (JSON): { employeeId: "Z0039", pin: "..." }
+ * Tělo (JSON): { employeeId: "C001", pin: "..." }
  *
  * 1. Zkontroluje rate limit pro IP (max 5 neúspěšných pokusů / 15 min)
  * 2. Ověří heslo oproti SHA-256 hashi v KV
@@ -13,18 +13,12 @@ const SESSION_TTL_SECONDS = 8 * 60 * 60; // 8 hodin
 const RL_MAX_ATTEMPTS     = 5;            // max neúspěšných pokusů per IP
 const RL_WINDOW_SECONDS   = 15 * 60;      // okno 15 minut
 
-const EMPLOYEES = {
-  "Z0039": "Filipová Petra",
-  "Z0037": "Lukavská Adéla",
-  "Z0050": "Prouzová Lenka",
-  "Z0068": "Čapková Kateřina",
-  "Z0052": "Nezvalová Jolana",
-  "Z0067": "Koval Olena",
-  "Z0066": "Krayczy Erik",
-  "Z0069": "Lenher Daryna",
-  "Z0043": "Izáková Květa",
-  "Z0070": "Izáková Adéla",
-};
+const CLIENTS = Object.fromEntries(
+  Array.from({ length: 50 }, (_, i) => {
+    const id = `C${String(i + 1).padStart(3, "0")}`;
+    return [id, `Klient ${id}`];
+  })
+);
 
 // ── Rate limiting helpers ──
 
@@ -104,7 +98,7 @@ export async function onRequestPost({ request, env }) {
   const { employeeId, pin } = body || {};
 
   // 2. Základní validace vstupu — neúspěch se počítá do limitu
-  if (!employeeId || !pin || !EMPLOYEES[employeeId]) {
+  if (!employeeId || !pin || !CLIENTS[employeeId]) {
     await incrementRateLimit(env, ip);
     return new Response("Unauthorized", { status: 401 });
   }
@@ -146,7 +140,7 @@ export async function onRequestPost({ request, env }) {
     ok: true,
     sessionToken,
     expiresAt,
-    name: EMPLOYEES[employeeId],
+    name: CLIENTS[employeeId],
   }), {
     headers: { "content-type": "application/json" },
   });

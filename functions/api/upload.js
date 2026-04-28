@@ -4,11 +4,8 @@ const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
 
 const ALLOWED = {
   ".pdf":  "application/pdf",
-  ".md":   "text/markdown; charset=utf-8",
-  ".csv":  "text/csv; charset=utf-8",
-  ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  ".ts":   "text/typescript; charset=utf-8",
-  ".xml":  "application/xml; charset=utf-8",
+  ".zip":  "application/zip",
+  ".zfo":  "application/vnd.software602.filler.form-xml-zip",
 };
 
 export async function onRequestPost({ request, env }) {
