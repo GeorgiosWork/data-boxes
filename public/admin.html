@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin | Datové schránky</title>
+  <style>
+    :root {
+      --blue: #1a56db;
+      --blue-dark: #0e3fa8;
+      --danger: #c53030;
+      --bg: #f0f4f9;
+      --surface: #fff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --muted: #64748b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.5; min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .topbar-brand { font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 10px; }
+    .topbar-brand .dot {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .topbar-brand .dot svg { width: 16px; height: 16px; fill: #fff; }
+    .topbar-right { font-size: 13px; color: var(--muted); }
+    .topbar-right a { color: var(--blue); text-decoration: none; font-weight: 600; }
+    .topbar-right a:hover { text-decoration: underline; }
+
+    /* ── Layout ── */
+    .page { max-width: 1080px; margin: 0 auto; padding: 28px 16px 64px; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 4px; margin-bottom: 22px; border-bottom: 2px solid var(--border); }
+    .tab {
+      padding: 10px 20px; font-size: 14px; font-weight: 600;
+      color: var(--muted); background: none; border: none;
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+      cursor: pointer; transition: color 0.15s, border-color 0.15s;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 700px) { .grid2 { grid-template-columns: 1fr; } }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    }
+    .card h2 { font-size: 15px; font-weight: 700; margin-bottom: 18px; }
+
+    /* ── Fields ── */
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 5px; }
+    .field input[type="password"],
+    .field input[type="text"],
+    .field select {
+      width: 100%; padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px; font-size: 14px;
+      background: #fafbfc; color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field input:focus, .field select:focus {
+      outline: none; border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(26,86,219,0.10); background: #fff;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 10px 18px; border-radius: 9px;
+      border: 1px solid var(--border); background: var(--surface);
+      cursor: pointer; font-weight: 600; font-size: 14px;
+      transition: background 0.15s; color: var(--text);
+    }
+    .btn:hover { background: #f1f5f9; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      color: #fff; border: none; width: 100%;
+      padding: 12px; margin-top: 6px; font-size: 14px;
+    }
+    .btn-primary:hover { background: #fff; color: var(--blue); border: 1px solid var(--blue); opacity: 1; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .btn-danger {
+      font-size: 12px; padding: 6px 14px;
+      color: var(--danger); border-color: #fecaca; background: #fff;
+    }
+    .btn-danger:hover { background: #fff0f0; border-color: var(--danger); }
+
+    /* ── Status ── */
+    .status {
+      padding: 10px 14px; border-radius: 8px; font-size: 13px;
+      margin-top: 14px; display: none; border: 1px solid transparent;
+    }
+    .status.show { display: block; }
+    .status.info  { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+    .status.ok    { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+    .status.error { background: #fff0f0; color: var(--danger); border-color: #fecaca; }
+
+    /* ── PIN tabulka ── */
+    .pin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pin-table th {
+      text-align: left; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--muted); padding: 0 10px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .pin-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .pin-table tr:last-child td { border-bottom: none; }
+    .pin-table tr:hover td { background: #fafbfc; }
+    .pin-set   { color: #166534; font-weight: 600; }
+    .pin-unset { color: #94a3b8; }
+
+    /* ── File list ── */
+    .list-toolbar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px; gap: 10px; flex-wrap: wrap;
+    }
+    .file-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; border: 1px solid #eef2f7;
+      border-radius: 9px; margin-bottom: 8px; background: #fdfdfe; gap: 10px;
+    }
+    .file-item:hover { border-color: #c4d4ec; }
+    .file-info { flex: 1; min-width: 0; }
+    .file-info strong { display: block; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-info .file-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .tag-badge {
+      display: inline-block; font-size: 10px;
+      background: #eff6ff; color: var(--blue);
+      padding: 1px 7px; border-radius: 4px;
+      margin-left: 6px; font-weight: 600; vertical-align: middle;
+    }
+    .empty-note { color: var(--muted); font-size: 13px; text-align: center; padding: 30px 0; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <span class="dot">
+      <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/></svg>
+    </span>
+    Datové schránky — Administrace
+  </div>
+  <div class="topbar-right">
+    Náhled:
+    <a id="previewLink" href="/" target="_blank">portál</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="upload">Nahrávání souborů</button>
+    <button class="tab" data-tab="pins">Správa PINů</button>
+  </div>
+
+  <!-- ══ TAB: Nahrávání ══ -->
+  <div class="tab-panel active" id="tab-upload">
+    <div class="grid2">
+
+      <div class="card">
+        <h2>Nahrát soubor datové schránky</h2>
+
+        <div class="field">
+          <label for="selEmployee">Klient</label>
+          <select id="selEmployee"></select>
+        </div>
+
+        <div class="field">
+          <label for="selCategory">Kategorie</label>
+          <select id="selCategory">
+            <option value="Datová zpráva">Datová zpráva</option>
+            <option value="Doručenka">Doručenka</option>
+            <option value="Příloha">Příloha</option>
+            <option value="Ostatní">Ostatní</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="selFile">Soubor (.zip, .pdf, .zfo)</label>
+          <input id="selFile" type="file" accept=".zip,.pdf,.zfo" multiple />
+        </div>
+
+        <button class="btn btn-primary" id="uploadBtn">Nahrát</button>
+        <div class="status" id="uploadStatus"></div>
+      </div>
+
+      <div class="card">
+        <h2>Soubory klienta</h2>
+        <div class="list-toolbar">
+          <select id="filterEmployee" style="padding:7px 10px; font-size:13px; border:1.5px solid var(--border); border-radius:9px; background:#fafbfc;"></select>
+          <button class="btn" id="refreshBtn" style="font-size:12px; padding:7px 14px;">↺ Obnovit</button>
+        </div>
+        <div id="fileList"><p class="empty-note">Načítám…</p></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ TAB: PINy ══ -->
+  <div class="tab-panel" id="tab-pins">
+    <div class="grid2">
+
+      <div class="card">
+        <h2>Nastavit / změnit heslo</h2>
+
+        <div class="field">
+          <label for="pinEmployee">Klient</label>
+          <select id="pinEmployee"></select>
+        </div>
+
+        <div class="field">
+          <label for="pinValue">Nové heslo</label>
+          <input id="pinValue" type="password" placeholder="min. 4 znaky" autocomplete="new-password" />
+        </div>
+        <div class="field">
+          <label for="pinConfirm">Potvrzení hesla</label>
+          <input id="pinConfirm" type="password" placeholder="Zopakujte heslo" autocomplete="new-password" />
+        </div>
+
+        <button class="btn btn-primary" id="pinSaveBtn">Uložit heslo</button>
+        <div class="status" id="pinStatus"></div>
+      </div>
+
+      <div class="card">
+        <h2>Přehled hesel</h2>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">
+          Zobrazuje, zda má klient nastavené heslo. Hodnoty hesel nejsou zobrazeny.
+        </p>
+        <table class="pin-table">
+          <thead>
+            <tr>
+              <th>Klient</th>
+              <th>Číslo</th>
+              <th>Heslo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="pinTableBody">
+            <tr><td colspan="4" style="text-align:center; color:var(--muted); padding:20px;">Načítám…</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px; text-align:right;">
+          <button class="btn" id="refreshPinsBtn" style="font-size:12px; padding:7px 14px;">↺ Obnovit</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const CLIENTS = Array.from({ length: 50 }, (_, i) => {
+    const id = `C${String(i + 1).padStart(3, "0")}`;
+    return { id, name: `Klient ${id}` };
+  });
+
+  function fillClientSelect(id) {
+    $(id).innerHTML = CLIENTS
+      .map(client => `<option value="${client.id}">${client.id} – ${client.name}</option>`)
+      .join("");
+  }
+
+  ["selEmployee", "filterEmployee", "pinEmployee"].forEach(fillClientSelect);
+
+  /* ── Tabs ── */
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      $("tab-" + btn.dataset.tab).classList.add("active");
+      if (btn.dataset.tab === "pins") loadPinOverview();
+    });
+  });
+
+  /* ── Náhled odkaz ── */
+  function updatePreviewLink() {
+    const id = $("filterEmployee").value;
+    $("previewLink").href = `/`;
+    $("previewLink").textContent = "portál";
+  }
+
+  /* ── Status helper ── */
+  function showStatus(elId, msg, type = "info", autoHide = true) {
+    const el = $(elId);
+    el.textContent = msg;
+    el.className = `status show ${type}`;
+    if (autoHide && (type === "info" || type === "ok"))
+      setTimeout(() => el.classList.remove("show"), 6000);
+  }
+
+  /* ══ Nahrávání ══ */
+  $("uploadBtn").addEventListener("click", async () => {
+    const files = $("selFile").files;
+    if (!files.length) return showStatus("uploadStatus", "Vyberte soubor.", "error");
+
+    const employeeId = $("selEmployee").value;
+    const category   = $("selCategory").value;
+
+    $("uploadBtn").disabled = true;
+    let ok = 0, fail = 0;
+
+    for (let i = 0; i < files.length; i++) {
+      showStatus("uploadStatus", `Nahrávám ${i + 1}/${files.length}: ${files[i].name}…`, "info", false);
+      const fd = new FormData();
+      fd.set("clientId", employeeId);
+      fd.set("title",    category);
+      fd.set("tags",     category);
+      fd.set("file",     files[i]);
+
+      try {
+        const res = await fetch("/api/upload", { method: "POST", body: fd });
+        if (res.ok) ok++;
+        else { const t = await res.text(); showStatus("uploadStatus", `Chyba: ${t}`, "error", false); fail++; }
+      } catch { fail++; }
+    }
+
+    showStatus("uploadStatus",
+      `Dokončeno: ${ok} nahráno${fail ? `, ${fail} selhalo` : ""}.`,
+      fail ? "error" : "ok"
+    );
+    $("uploadBtn").disabled = false;
+    $("selFile").value = "";
+    if ($("selEmployee").value === $("filterEmployee").value) refreshFileList();
+  });
+
+  /* ── Seznam souborů ── */
+  async function refreshFileList() {
+    const id = $("filterEmployee").value;
+    $("fileList").innerHTML = '<p class="empty-note">Načítám…</p>';
+
+    try {
+      const res  = await fetch(`/api/list?clientId=${id}`);
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      const items = data.items || [];
+
+      if (!items.length) { $("fileList").innerHTML = '<p class="empty-note">Žádné soubory.</p>'; return; }
+
+      $("fileList").innerHTML = "";
+      items.forEach(it => {
+        const tag  = it.tags?.[0] ? `<span class="tag-badge">${esc(it.tags[0])}</span>` : "";
+        const date = new Date(it.createdAt).toLocaleDateString("cs-CZ");
+        const div  = document.createElement("div");
+        div.className = "file-item";
+        div.innerHTML = `
+          <div class="file-info">
+            <strong>${esc(it.title || it.filename)}${tag}</strong>
+            <div class="file-meta">${date} · ${esc(it.filename)}</div>
+          </div>
+          <button class="btn btn-danger" data-id="${esc(it.id)}">Smazat</button>`;
+        $("fileList").appendChild(div);
+      });
+    } catch (e) {
+      $("fileList").innerHTML = `<p class="empty-note" style="color:var(--danger)">Chyba: ${e.message}</p>`;
+    }
+  }
+
+  $("fileList").addEventListener("click", async e => {
+    const btn = e.target.closest(".btn-danger");
+    if (!btn) return;
+    if (!confirm("Opravdu smazat tento soubor?")) return;
+    const res = await fetch("/api/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: btn.dataset.id, clientId: $("filterEmployee").value }),
+    });
+    if (res.ok) refreshFileList();
+    else showStatus("uploadStatus", "Smazání selhalo: " + res.status, "error");
+  });
+
+  $("filterEmployee").addEventListener("change", refreshFileList);
+  $("refreshBtn").addEventListener("click", refreshFileList);
+  $("selEmployee").addEventListener("change", () => {
+    $("filterEmployee").value = $("selEmployee").value;
+    refreshFileList();
+  });
+
+  /* ══ PINy ══ */
+  $("pinSaveBtn").addEventListener("click", async () => {
+    const employeeId = $("pinEmployee").value;
+    const pin        = $("pinValue").value;
+    const confirm2   = $("pinConfirm").value;
+
+    if (pin.length < 4) return showStatus("pinStatus", "Heslo musí mít alespoň 4 znaky.", "error");
+    if (pin !== confirm2) return showStatus("pinStatus", "Hesla se neshodují.", "error");
+
+    $("pinSaveBtn").disabled = true;
+    try {
+      const res = await fetch("/api/pin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employeeId, pin }),
+      });
+
+      if (res.ok) {
+        showStatus("pinStatus", "Heslo bylo úspěšně uloženo.", "ok");
+        $("pinValue").value   = "";
+        $("pinConfirm").value = "";
+        loadPinOverview();
+      } else {
+        const t = await res.text();
+        showStatus("pinStatus", "Chyba: " + t, "error");
+      }
+    } catch {
+      showStatus("pinStatus", "Chyba sítě.", "error");
+    } finally {
+      $("pinSaveBtn").disabled = false;
+    }
+  });
+
+  async function loadPinOverview() {
+    const tbody = $("pinTableBody");
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px;">Načítám…</td></tr>`;
+
+    // Pro každého klienta zkusíme přečíst existenci záznamu přes /api/pin-status
+    // Nemáme speciální endpoint — použijeme /api/list jako proxy (jen kontrolujeme existenci)
+    // Správné řešení: dedikovaný GET /api/pin endpoint chráněný admin tokenem
+    // Pro nyní zobrazíme tabulku s tlačítkem "Nastavit" → přepne výběr vlevo
+
+    tbody.innerHTML = "";
+    CLIENTS.forEach(emp => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${esc(emp.name)}</td>
+        <td><code>${esc(emp.id)}</code></td>
+        <td class="pin-unset" id="pin-status-${emp.id}">—</td>
+        <td>
+          <button class="btn" style="font-size:11px;padding:4px 10px;"
+            onclick="selectEmployeeForPin('${emp.id}')">Nastavit</button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+
+    // Načteme stav PINů přes nový endpoint GET /api/pin
+    try {
+      const res = await fetch("/api/pin");
+      if (res.ok) {
+        const data = await res.json();
+        // data.pins = { "C001": true, "C002": false, ... }
+        CLIENTS.forEach(emp => {
+          const cell = $(`pin-status-${emp.id}`);
+          if (!cell) return;
+          if (data.pins?.[emp.id]) {
+            cell.textContent = "✓ Nastaven";
+            cell.className = "pin-set";
+          } else {
+            cell.textContent = "Nenastaveno";
+            cell.className = "pin-unset";
+          }
+        });
+      }
+    } catch { /* tiché selhání — stav PINů zůstane prázdný */ }
+  }
+
+  window.selectEmployeeForPin = (id) => {
+    $("pinEmployee").value = id;
+    $("pinValue").focus();
+  };
+
+  $("refreshPinsBtn").addEventListener("click", loadPinOverview);
+
+  /* ── Init ── */
+  refreshFileList();
+
+  // Spustit načtení PINů při přepnutí na záložku (již v tab handleru)
+</script>
+</body>
+</html>
